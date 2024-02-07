@@ -23,15 +23,17 @@
                 <label for="expiry">Expiration Date:</label>
                 <input type="date" id="expiryDate" class="product__expiry" required>
                 <label for="quantity">Quantity:</label>
-                <input type="number" min="1" class="product__quantity" placeholder="How many available?" required>
+                <input type="text" class="product__quantity" placeholder="How many available?" required>
                 <button type="submit" class="submit__button">Add</button>
+                <!-- form validation toast -->
+                <div class="toast__function">
+                    <div id="submit__toast">Added to storage!</div>
+                    <div id="submit__negative__toast">Woops! Something went wrong.</div>
+                </div>
             </form>
-        </div>
-        <!--  display products in the pharmacy's storage -->
-        <section class="pharmacy__storage">
-            <div class="storage__headline">
-                <h2>Storage</h1>
-            </div>
+            <!--  display products in the pharmacy's storage -->
+            <section class="pharmacy__storage">
+            <h2 class="storage__headline">Storage</h2>
             <div class="display__storage__container">
                 <header class="storage__display__header">
                     <span class="">Product Name</span>
@@ -44,14 +46,16 @@
                 <ul class="storage__list">
 
                 </ul>
-            </div>
-            
+            </div>    
         </section>
+    </div>
+        
         
         <div class=""></div>
         <div class=""></div>
         <div class=""></div>
         <div class=""></div>
+
         <!-- js link -->
         <script src="./js/app.js"></script>
     </body>
