@@ -1,18 +1,59 @@
 <!DOCTYPE html>
-
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Object-Orieented Assignment</title> <!-- mock-title -->
-        <!-- link css -->
+        <title>Assignment 2</title> <!-- mock title -->
+        <!-- css links -->
         <link rel="stylesheet" href="./styles/reset.css">
         <link rel="stylesheet" href="./styles/style.css">
     </head>
+
     <body>
+        <div class="main__container">
+            <!-- form section -->
+            <form class="pharmacy__storage__form">
+                <h2>Add to storage</h2>
+                <label for="name">Product Name:</label>
+                <input type="text" class="product__name" placeholder="Enter product name..." required>
+                <label for="id">Product ID:</label>
+                <input type="text" class="product__id" placeholder="ID" required unique>
+                <label for="manufacturer">Manufacturer:</label>
+                <input  type="text" class="product__manufacturer" placeholder="Manufacturer..." required>
+                <label for="expiry">Expiration Date:</label>
+                <input type="date" id="expiryDate" class="product__expiry" required>
+                <label for="quantity">Quantity:</label>
+                <input type="number" min="1" class="product__quantity" placeholder="How many available?" required>
+                <button type="submit" class="submit__button">Add</button>
+            </form>
+        </div>
+        <!--  display products in the pharmacy's storage -->
+        <section class="pharmacy__storage">
+            <div class="storage__headline">
+                <h2>Storage</h1>
+            </div>
+            <div class="display__storage__container">
+                <header class="storage__display__header">
+                    <span class="">Product Name</span>
+                    <span class="">ID</span>
+                    <span class="">Manufacturer</span>
+                    <span class="">Expiration Date</span>
+                    <span class="">Quantity</span>
+                    <span class=""></span>
+                </header>
+                <ul class="storage__list">
 
-
-        <!-- link js -->
+                </ul>
+            </div>
+            
+        </section>
+        
+        <div class=""></div>
+        <div class=""></div>
+        <div class=""></div>
+        <div class=""></div>
+        <!-- js link -->
         <script src="./js/app.js"></script>
     </body>
+
 </html>
