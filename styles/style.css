@@ -51,14 +51,14 @@ ul {
 
 /* form-validation toast styles */
 
-#submit__toast {
+.submit__toast {
     display: none;
     border-radius: 5px;
     border: 1px solid #357340;
     background: rgba(102, 200, 119, 0.50);
 }
   
-#submit__negative__toast {
+.submit__negative__toast {
     display: none;
     border-radius: 0.3125rem;
     border: 1px solid #CC5757;
@@ -87,7 +87,7 @@ ul {
 .storage__display__header {
     display: flex;
     background-color: lightgrey;
-    border: 2px solid lightgrey;
+    border: 1.25rem solid lightgrey;
     height: 2.5rem;
     border-radius: 0.25rem;
     margin-bottom: 0.25rem;
@@ -98,4 +98,5 @@ ul {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.895rem;
 }
