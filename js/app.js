@@ -18,7 +18,6 @@ const productID = document.querySelector('.product__id');
 const manufacturer = document.querySelector('.product__manufacturer');
 const productExpiry = document.querySelector('.product__expiry');
 const productQuantity = document.querySelector('.product__quantity');
-const storageUl = document.querySelector('.storage__list');
 
 const positiveToast = document.querySelector('.submit__toast');
 const negativeToast = document.querySelector('.submit__negative__toast');
@@ -30,17 +29,24 @@ const displayStorage = document.querySelector('.display__storage__container');
 loadFormData();
 // adding eventlisteners
 
-/* inputForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let newProduct;
-    if(selectElement.value) */
+
 
 // toast function
-document.addEventListener('DOMContentLoaded', function(){
-    inputForm.addEventListener('submit', function (event) {
-        event.preventDefault();
+    inputForm.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-        if (isFormFilledOut(inputForm)) {
+        if (isFormFilledOut()) {
+            const newProduct = new Product(
+                productName.value,
+                productID.value,
+                manufacturer.value,
+                productExpiry.value,
+                quantity.value
+            );
+
+            Product.addProduct(newProduct);
+            displayFormData(newProduct);
+
             saveFormData();
             positiveToast.style.display = 'block';
             negativeToast.style.display = 'none';
@@ -74,9 +80,13 @@ function isFormFilledOut(inputForm) {
 }
 
 // does ID exist
-/* function productIDExists(id) {
-    // function will check if the ID exists within the local storage
-} */
+ 
+function productIDExists(id) {
+    const storedData = JSON.parse(localStorage.getItem('products')) || [];
+    return storedData.some(product => product.id === id);
+}
+
+// saving the form to local storage
 
 function saveFormData() {
     const formData = {
@@ -101,16 +111,88 @@ function loadFormData() {
         productQuantity.value = parsedData.productQuantity || '';
     }
 }
-});
+loadFormData();
+UI.renderProducts();
+
 
 // declaring the Product class
 
 class Product {
-    constructor (name, id, manu, expDate, quantity){
-        this.product_name = name;
-        this.prod_id = id;
-        this.manufacture = manu;
-        this.expiration_date = new Date(expDate).toISOString().substr(0,10); 
-        this.quantity= quantity;
+    constructor (name, id, manufacturer, expiryDate, quantity){
+        this.productName = name;
+        this.productID = id;
+        this.manufacturer = manufacturer;
+        this.expiryDate = Date.now(); 
+        this.quantity = quantity;
 } 
-static addProduct(product)
+
+static addProduct(product) {
+    const storedData = JSON.parse(localStorage.getItem('products')) || [];
+    storedData.push(product);
+    localStorage.setItem('products', JSON.stringify(storedData));
+}
+
+static deleteProduct(id) {
+    const storedData = JSON.parse(localStorage.getItem('products')) || [];
+    const index = storedData.findIndex((product) => product.ID.toString() === id.toString());
+    if (index !== -1) {
+        storedData.splice(index, 1)
+        localStorage.setItem( 'products' ,JSON.stringify(storedData));
+        UIEvent.renderProducts();
+        }
+    }
+}
+
+// declare the UI class
+
+class UI {
+    static renderProducts() {
+        const storageUl = document.querySelector('.storage__list');
+        const storedData = JSON.parse(localStorage.getItem('products')) ||  [];
+        storageUl.innerHTML = '';
+
+        storedData.forEach((product) => {
+            const liRow = document.createElement('li');
+            const renderedName = document.createElement('span');
+            const renderedID = document.createElement('span');
+            const renderedManufacturer = document.createElement('span');
+            const renderedExpiry = document.createElement('span');
+            const renderedQuantity = document.createElement('span');
+            const deleteButtonContainer = document.createElement('span');
+            const deleteButton = document.createElement('button');
+
+            renderedName.textContent = productName;
+            renderedID.textContent = productID;
+            renderedManufacturer.textContent = product.manufacturer;
+            renderedExpiry.textContent = product.expiryDate;
+            renderedQuantity.textContent = product.quantity;
+            deleteButton.textContent = 'DELETE X';
+
+            liRow.classList.add('products__row');
+            deleteButton.classList.add('delete__button');
+
+            liRow.dataset.id = product.ID;
+
+            storageUl.append(liRow);
+            liRow.append(
+            renderedName,
+            renderedID,
+            renderedManufacturer,
+            renderedExpiry,
+            renderedQuantity,
+            deleteButtonContainer
+           );
+
+           deleteButtonContainer.append(deleteButton);
+
+           deleteButton.addEventListener('click', (e) => {
+            const rowID = e.currentTarget.parentElement.parentElement.dataset.id;
+            Product.deleteProduct(rowID);
+           });
+        });
+    }
+}
+
+function displayFormData(product){
+    UI.renderProducts();
+}
