@@ -1,60 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Assignment 2</title> <!-- mock title -->
-        <!-- css links -->
-        <link rel="stylesheet" href="./styles/reset.css">
-        <link rel="stylesheet" href="./styles/style.css">
-    </head>
-
-    <body>
-        <div class="main__container">
-            <!-- form section -->
-            <form class="pharmacy__storage__form">
-                <h2>Add to storage</h2>
-                <label for="name">Product Name:</label>
-                <input type="text" class="product__name" placeholder="Enter product name..." required>
-                <label for="id">Product ID:</label>
-                <input type="text" class="product__id" placeholder="ID" required unique>
-                <label for="manufacturer">Manufacturer:</label>
-                <input  type="text" class="product__manufacturer" placeholder="Manufacturer..." required>
-                <label for="expiry">Expiration Date:</label>
-                <input type="date" id="expiryDate" class="product__expiry" required>
-                <label for="quantity">Quantity:</label>
-                <input type="text" class="product__quantity" placeholder="How many available?" required>
-                <button type="submit" class="submit__button">Add</button>
-                <!-- form validation toast -->
-                <div class="toast__function">
-                    <div class="submit__toast">Added to storage!</div>
-                    <div class="submit__negative__toast">Woops! Something went wrong.</div>
-                    <div class="submit__negative__toast" id="errorID">Error! ID Already Exists.</div>
-                </div>
-            </form>
-             <!-- display products in the pharmacy's storage  -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Inventory Management</title>
+    <!-- css links -->
+    <link rel="stylesheet" href="./styles/reset.css">
+    <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+    <div class="main__container">
+        <!-- Form section -->
+        <form class="pharmacy__storage__form">
+            <h2>Add to storage</h2>
+            <label for="name">Product Name:</label>
+            <input type="text" class="product__name" placeholder="Enter product name..." required>
+            <label for="select">Type:</label>
+            <select class="product__type">
+                <option value="capsule">Capsule</option>
+                <option value="liquid">Liquid</option>
+            </select>
+            <label for="manufacturer">Manufacturer:</label>
+            <input type="text" class="product__manufacturer" placeholder="Manufacturer..." required>
+            <label for="expiry">Expiration Date:</label>
+            <input type="date" id="expiryDate" class="product__expiry" required>
+            <label for="quantity">Quantity:</label>
+            <input type="text" class="product__quantity" placeholder="How many available?" required>
+            <button type="submit" class="submit__button">Add</button>
+            <!-- Form validation toast -->
+            <div class="toast__function">
+                <div class="submit__toast">Added to storage!</div>
+                <div class="submit__negative__toast">Woops! Something went wrong.</div>
+                <div class="submit__negative__toast" id="errorID">Error! ID Already Exists.</div>
+            </div>
+        </form>
+            <!-- Display products in the pharmacy's storage -->
             <section class="pharmacy__storage">
-            <h2 class="storage__headline">Storage</h2>
-            <div class="display__storage__container">
-                <div class="display__storage">
-                    <header class="storage__display__header">
-                        <span class="">Product Name</span>
-                        <span class="">ID</span>
-                        <span class="">Manufacturer</span>
-                        <span class="">Expiration Date</span>
-                        <span class="">Quantity</span>
-                        <span class=""></span>
-                    </header>
-                    <ul class="storage__list">
-
-                    </ul>
+                <h2 class="storage__headline">Storage</h2>
+                 <!-- Toggle buttons -->
+                <div class="toggle__buttons">
+                    <button class="toggle__general__button">General Storage</button>
+                    <button class="toggle__liquid__button">Liquid Storage</button>
                 </div>
-            </div>    
-        </section>
-    </div>
-        
-        <!-- js link -->
-        <script src="./js/app.js"></script>
-    </body>
-
+                <div class="display__storage__container">
+                    <div class="display__storage">
+                        <header class="storage__display__header">
+                            <span>Product Name</span>
+                            <span>Type</span>
+                            <span>Manufacturer</span>
+                            <span>Expiration Date</span>
+                            <span>Quantity</span>
+                            <span></span>
+                        </header>
+                        <ul class="storage__list"></ul>
+                    </div>
+                    <div class="display__storage__liquids">
+                        <header class="storage__display__header" style="display: none;">
+                            <span>Product Name</span>
+                            <span>Type</span>
+                            <span>Manufacturer</span>
+                            <span>Expiration Date</span>
+                            <span>Quantity</span>
+                            <span></span>
+                        </header>
+                        <ul class="storage__list__liquids"></ul>
+                    </div>
+                </div>
+            </section>
+        </div>        
+    <!-- js link -->
+    <script src="./js/apptest.js"></script>
+</body>
 </html>

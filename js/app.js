@@ -32,28 +32,30 @@ function isFormFilledOut(productForm) {
 // declaring the product class
 
 class Product {
-    constructor(name, productid, manufacturer, expiryDate, quantity){
+    constructor(name, manufacturer, expiryDate, quantity) {
         this.name = name;
-        this.productID = productid;
+        this.productID = Date.now();
         this.manufacturer = manufacturer;
         this.expiryDate = new Date(expiryDate);
         this.quantity = quantity;
     }
 
+    static getStoredData() {
+        return JSON.parse(localStorage.getItem('products')) || [];
+    }
+
     static addProduct(product) {
-    const storedData = JSON.parse(localStorage.getItem('products')) || [];
-    storedData.push(product);
-    localStorage.setItem('products', JSON.stringify(storedData));
-}
- // delete function
+        const storedData = Product.getStoredData();
+        storedData.push(product);
+        localStorage.setItem('products', JSON.stringify(storedData));
+    }
 
     static deleteProduct(id) {
-    const storedData = JSON.parse(localStorage.getItem('products')) || [];
-    const index = storedData.findIndex((product) => product.productID.toString() === id.toString());
-    if (index !== -1) {
-        storedData.splice(index, 1)
-        localStorage.setItem( 'products', JSON.stringify(storedData));
-        
+        const storedData = Product.getStoredData();
+        const index = storedData.findIndex((product) => product.productID.toString() === id.toString());
+        if (index !== -1) {
+            storedData.splice(index, 1);
+            localStorage.setItem('products', JSON.stringify(storedData));
         }
     }
 }
@@ -66,11 +68,11 @@ function renderProducts() {
     storedData.forEach(product => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `
-            <span>Name: ${product.name}</span>
-            <span>ID: ${product.productID}</span>
-            <span>Manufacturer: ${product.manufacturer}</span>
-            <span>Expiry Date: ${product.expiryDate}</span>
-            <span>Quantity: ${product.quantity}</span>
+            <span>${product.name}</span>
+            <span>${product.productID}</span>
+            <span>${product.manufacturer}</span>
+            <span>${product.expiryDate}</span>
+            <span>${product.quantity}</span>
             <button class="delete-button" data-id="${product.productID}">Delete</button>
         `;
 
@@ -89,15 +91,17 @@ function renderProducts() {
 }
 
 function displayFormData(product) {
-    console.log(`Form Data: Name - ${product.name}, ID - ${product.productID}, Manufacturer - ${product.manufacturer}, Expiry Date - ${product.expiryDate}, Quantity - ${product.quantity}`);
+    console.log(`Form Data: Name - ${product.name},  
+    Manufacturer - ${product.manufacturer}, Expiry Date - ${product.expiryDate}, 
+    Quantity - ${product.quantity}`);
 }
 
 // check if a product with the given ID already exists
-function productIDExists(id) {
+/* function productIDExists(id) {
     const storedData = JSON.parse(localStorage.getItem('products')) || [];
     return storedData.some(product => product.productID === id);
 }
-
+ */
 // call renderProducts and loadFormData when the page loads
 window.addEventListener('load', () => {
     renderProducts();
@@ -111,7 +115,7 @@ productForm.addEventListener('submit', (e) => {
     if (isFormFilledOut(productForm)) {
         const newProduct = new Product(
             name.value,
-            productid.value,
+           /*  productid.value, */
             manufacturer.value,
             expiryDate.value,
             quantity.value
@@ -133,7 +137,6 @@ productForm.addEventListener('submit', (e) => {
             }, 2000);
         } else {
             errorToast.style.display = 'block';
-            negativeToast.style.display = 'none';
         }
     } else {
         errorToast.style.display = 'none';
@@ -147,7 +150,7 @@ productForm.addEventListener('submit', (e) => {
 function saveFormData() {
     const formData = {
         productName: name.value,
-        productID: productid.value,
+       /*  productID: productid.value, */
         manufacturer: manufacturer.value,
         productExpiry: new Date(expiryDate.value).toISOString(), // convert to ISO format
         productQuantity: quantity.value
@@ -162,7 +165,7 @@ function loadFormData() {
     if (storedData) {
         const parsedData = JSON.parse(storedData);
         name.value = parsedData.productName || '';
-        productid.value = parsedData.productID || '';
+        /* productid.value = parsedData.productID || ''; */
         manufacturer.value = parsedData.manufacturer || '';
         
         // convert ISO date format

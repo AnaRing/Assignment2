@@ -31,12 +31,23 @@ ul {
     border-radius: 0.25rem;
     border-color: black;
 }
+.pharmacy__storage__form select {
+    height: 2rem;
+    padding: 0 0.25rem;
+    border-radius: 0.3rem;
+    border-color: black;
+}
 
 .pharmacy__storage__form input:hover {
     background-color: lightgrey;
 }
 
-.submit__button {
+.pharmacy__storage__form select:hover {
+    background-color: lightgrey;
+}
+
+.submit__button, .toggle__liquid__button,
+.toggle__general__button {
     height: 2rem;
     cursor: pointer;
     border: none;
@@ -65,11 +76,23 @@ ul {
     background: rgba(255, 138, 138, 0.50);
 }
 
-   /* right column styles, display list */
+/* right column styles, display list */
+
+
 .pharmacy__storage {
     flex-basis: 70%;
     display: flex;
     flex-direction: column;
+}
+
+.toggle__buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toggle__liquid__button, .toggle__general__button {
+    margin: 0 0.125rem; /* Adjust margin as needed */
 }
 
 .storage__headline {
@@ -85,7 +108,6 @@ ul {
 }
 
 .storage__display__header {
-    display: flex;
     background-color: lightgrey;
     border: 1.25rem solid lightgrey;
     height: 2.5rem;
@@ -93,10 +115,14 @@ ul {
     margin-bottom: 0.25rem;
 }
 
-.storage__display__header span {
-    flex-basis: 16.6%;
+.display__storage__liquids .storage__display {
+    flex-basis: 20%; /* Adjust column width as needed */
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.895rem;
+}
+
+.storage__list__liquids {
+    display: none;
 }
