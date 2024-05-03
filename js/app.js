@@ -1,6 +1,3 @@
-// a new file to re-do the javascript 
-
-
 const products = [];
 
 // Selecting elements
@@ -25,7 +22,7 @@ const errorToast = document.querySelector('#errorID');
 class Product {
     constructor(name, manufacturer, expiryDate, quantity, type) {
         this.name = name;
-        this.productID = `${Date.now()}`; // generates an ID for the input
+        this.productID = `${type}_${Date.now()}`; // generates an ID for the input
         this.manufacturer = manufacturer;
         this.expiryDate = new Date(expiryDate).toISOString(); // converts it to ISO
         this.quantity = quantity;
@@ -97,7 +94,7 @@ function renderProducts() {
             <span>${product.type}</span>
             <span>${product.manufacturer}</span>
             <span>${product.expiryDate}</span>
-            <span>${product.productID.substring(0, 5)}</span> 
+            <span>${product.productID}</span> 
             <span>${product.quantity}</span>
             
             <button class="delete__button" data__id="${product.productID}">Delete</button>
