@@ -1,3 +1,5 @@
+//now liquids arent showing again, why
+
 const products = [];
 
 // Selecting elements
@@ -81,11 +83,13 @@ function isFormFilledOut(productForm) {
     return true;
 }
 
-// Render function
+// Render function - with help from chat gpt this time since my render stopped working after merging branches
 function renderProducts() {
     const storedData = JSON.parse(localStorage.getItem('products')) || [];
     storageList.innerHTML = '';
     liquidStorageList.innerHTML = '';
+
+    const selectedType = type.value.toLowerCase(); // Get the selected product type from the <select> element
 
     storedData.forEach(product => {
         const listItem = document.createElement('li');
@@ -100,13 +104,13 @@ function renderProducts() {
             <button class="delete__button" data__id="${product.productID}">Delete</button>
         `;
 
-        if (product.type === 'Liquid' && toggleLiquidButton.classList.contains('active')) {
-            liquidStorageList.appendChild(listItem);
-        } else if (product.type !== 'Liquid' && toggleGeneralButton.classList.contains('active')) {
-            storageList.appendChild(listItem);
+        if (product.type.toLowerCase() === 'liquid' && selectedType === 'liquid') {
+            liquidStorageList.appendChild(listItem); // Append to liquidStorageList if product type is "Liquid" and selectedType is also "Liquid"
+        } else if (product.type.toLowerCase() !== 'liquid' && selectedType !== 'liquid') {
+            storageList.appendChild(listItem); // Otherwise, append to storageList
         }
     });
-
+    
     // Add event listener for delete buttons
     const deleteButtons = document.querySelectorAll('.delete__button');
     deleteButtons.forEach(button => {
@@ -117,6 +121,10 @@ function renderProducts() {
         });
     });
 }
+
+
+    
+
 
 // Call renderProducts and loadFormData when the page loads
 window.addEventListener('load', () => {
