@@ -1,8 +1,8 @@
-//now liquids arent showing again, why
 
-const products = [];
+// load products from localStorage
+const products = JSON.parse(localStorage.getItem('products')) || [];
 
-// Selecting elements
+// select elements
 const productForm = document.querySelector('.pharmacy__storage__form');
 const liquidStorageList = document.querySelector('.storage__list__liquids');
 const storageList = document.querySelector('.storage__list');
@@ -10,212 +10,176 @@ const storageList = document.querySelector('.storage__list');
 const toggleGeneralButton = document.querySelector('.toggle__general__button');
 const toggleLiquidButton = document.querySelector('.toggle__liquid__button');
 
-const name = document.querySelector('.product__name');
-const manufacturer = document.querySelector('.product__manufacturer');
-const expiryDate = document.querySelector('.product__expiry');
-const quantity = document.querySelector('.product__quantity');
-const type = document.querySelector('.product__type');
+const nameInput = document.querySelector('.product__name');
+const manufacturerInput = document.querySelector('.product__manufacturer');
+const expiryDateInput = document.querySelector('.product__expiry');
+const quantityInput = document.querySelector('.product__quantity');
+const typeSelect = document.querySelector('.product__type');
 
 const positiveToast = document.querySelector('.submit__toast');
 const negativeToast = document.querySelector('.submit__negative__toast');
 const errorToast = document.querySelector('#errorID');
 
-// Base class for capsules
+// class introduction
 class Product {
     constructor(name, manufacturer, expiryDate, quantity, type) {
         this.name = name;
-        this.productID = `${type}_${Date.now()}`; // generates an ID for the input
         this.manufacturer = manufacturer;
-        this.expiryDate = new Date(expiryDate).toISOString(); // converts it to ISO
+        this.expiryDate = new Date(expiryDate).toISOString(); // converts date to ISO format
         this.quantity = quantity;
         this.type = type;
+        this.id = `${name}-${manufacturer}-${expiryDate}`; // generate a unique ID based on product details
     }
 
-    static getStoredData() {
-        return JSON.parse(localStorage.getItem('products')) || [];
-    }
-
-    static addProduct(product) {
-        const storedData = Product.getStoredData();
-
-        // check if the ID already exists
-        const existingProduct = storedData.find(prod => prod.name === product.name &&
-            prod.manufacturer === product.manufacturer &&
-            prod.expiryDate === product.expiryDate &&
-            prod.quantity === product.quantity &&
-            prod.type === product.type
-            );
-        if(existingProduct) {
-            errorToast.style.display = 'block';
-            return; 
-        }
-
-        storedData.push(product);
-        localStorage.setItem('products', JSON.stringify(storedData));
-    }
-
-    static deleteProduct(id) {
-        const storedData = Product.getStoredData();
-        const index = storedData.findIndex((product) => product.productID.toString() === id.toString());
-        if (index !== -1) {
-            storedData.splice(index, 1);
-            localStorage.setItem('products', JSON.stringify(storedData));
-        }
+    display() {
+        const shortId = this.id.substring(0, 5);
+        return `
+            <li id="${this.id}">
+                <span>${this.name}</span>
+                <span>${this.type}</span>
+                <span>${this.manufacturer}</span>
+                <span>${this.expiryDate.split('T')[0]}</span>
+                <span>${shortId}</span>
+                <span>${this.quantity}</span>
+                <button class="delete__button" onclick="deleteProduct('${this.id}')">Delete</button>
+                <button class="responsive__delete__button" onclick="deleteProduct('${this.id}')">x</button>
+            </li>
+        `;
     }
 }
 
-// Extended class for liquid products
-class LiquidProduct extends Product {
+class Capsules extends Product {
     constructor(name, manufacturer, expiryDate, quantity) {
-        super(name, manufacturer, expiryDate, quantity, 'Liquid'); // 
-        this.productID = Date.now();
+        super(name, manufacturer, expiryDate, quantity, 'Capsule');
     }
 }
 
-// isFormFilledOut function
-function isFormFilledOut(productForm) {
-    const formInputs = productForm.querySelectorAll('input[required]');
-    for (const input of formInputs) {
-        if (!input.value.trim()) {
-            return false;
-        }
+class Liquids extends Product {
+    constructor(name, manufacturer, expiryDate, quantity) {
+        super(name, manufacturer, expiryDate, quantity, 'Liquid');
     }
-    return true;
 }
 
-// Render function - with help from chat gpt this time since my render stopped working after merging branches
-function renderProducts() {
-    const storedData = JSON.parse(localStorage.getItem('products')) || [];
+// function to add products to storage
+function addProduct(event) {
+    event.preventDefault();
+
+    // form validation
+    if (!isFormFilledOut(productForm)) {
+        showErrorToast(negativeToast);
+        return;
+    }
+
+    const name = nameInput.value;
+    const manufacturer = manufacturerInput.value;
+    const expiryDate = expiryDateInput.value;
+    const quantity = quantityInput.value;
+    const type = typeSelect.value;
+
+    let product;
+
+    if (type === 'capsule') {
+        product = new Capsules(name, manufacturer, expiryDate, quantity);
+    } else if (type === 'liquid') {
+        product = new Liquids(name, manufacturer, expiryDate, quantity);
+    }
+
+    // check for duplicate ID
+    if (products.some(p => p.id === product.id)) {
+        showErrorToast(errorToast);
+        return;
+    }
+
+    products.push(product);
+    saveProductsToLocalStorage();
+    showPositiveToast(positiveToast);
+    displayProducts();
+    productForm.reset();
+}
+
+// function to save products to localStorage
+function saveProductsToLocalStorage() {
+    localStorage.setItem('products', JSON.stringify(products));
+}
+
+// function to load products from the local storage
+function loadProductsFromLocalStorage() {
+    const storedProducts = JSON.parse(localStorage.getItem('products'));
+    if (storedProducts) {
+        products.length = 0;
+        storedProducts.forEach(p => {
+            if (p.type === 'Capsule') {
+                products.push(new Capsules(p.name, p.manufacturer, p.expiryDate, p.quantity, p.type));
+            } else if (p.type === 'Liquid') {
+                products.push(new Liquids(p.name, p.manufacturer, p.expiryDate, p.quantity, p.type));
+            }
+        });
+        displayProducts();
+    }
+}
+
+// function to display products in their respective lists
+function displayProducts() {
     storageList.innerHTML = '';
     liquidStorageList.innerHTML = '';
 
-    const selectedType = type.value.toLowerCase(); // Get the selected product type from the <select> element
-
-    storedData.forEach(product => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            <span>${product.name}</span>
-            <span>${product.type}</span>
-            <span>${product.manufacturer}</span>
-            <span>${product.expiryDate}</span>
-            <span>${product.productID}</span> 
-            <span>${product.quantity}</span>
-            
-            <button class="delete__button" data__id="${product.productID}">Delete</button>
-        `;
-
-        if (product.type.toLowerCase() === 'liquid' && selectedType === 'liquid') {
-            liquidStorageList.appendChild(listItem); // Append to liquidStorageList if product type is "Liquid" and selectedType is also "Liquid"
-        } else if (product.type.toLowerCase() !== 'liquid' && selectedType !== 'liquid') {
-            storageList.appendChild(listItem); // Otherwise, append to storageList
+    products.forEach(product => {
+        if (product instanceof Product) {
+            if (product.type === 'Capsule') {
+                storageList.innerHTML += product.display();
+            } else if (product.type === 'Liquid') {
+                liquidStorageList.innerHTML += product.display();
+            }
         }
     });
-    
-    // Add event listener for delete buttons
-    const deleteButtons = document.querySelectorAll('.delete__button');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const productId = button.getAttribute('data__id');
-            Product.deleteProduct(productId);
-            renderProducts(); // Re-render products after deletion
-        });
-    });
 }
 
-
-    
-
-
-// Call renderProducts and loadFormData when the page loads
-window.addEventListener('load', () => {
-    loadFormData(); // Load form data
-    toggleGeneralButton.classList.add('active'); // Set general button as active initially
-    renderProducts(); // Render products based on the initial state
-});
-
-
-// Function to display form data
-function displayFormData(product) {
-    console.log(`Form Data: Name - ${product.name}, Manufacturer - ${product.manufacturer}, Type - ${product.type} 
-    Expiry Date - ${product.expiryDate}, Quantity - ${product.quantity}`);
-}
-
-// Toast function
-productForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    if (isFormFilledOut(productForm)) {
-        const newProduct = (type.value === 'Liquid') ?  
-            new LiquidProduct(name.value, manufacturer.value, expiryDate.value, quantity.value) :
-            new Product(name.value, manufacturer.value, expiryDate.value, quantity.value, 'Capsule');
-
-        Product.addProduct(newProduct); // Add the new product to local storage
-        displayFormData(newProduct);
-
-        saveFormData();
-        positiveToast.style.display = 'block';
-        negativeToast.style.display = 'none';
-        errorToast.style.display = 'none';
-        renderProducts();  // Call to update the displayed list
-        setTimeout(function () {
-            positiveToast.style.display = 'none';
-            productForm.reset();
-        }, 2000);
-    } else {
-        errorToast.style.display = 'none';
-        negativeToast.style.display = 'block';
-    }
-});
-
-
-// Saving the form data to local storage
-function saveFormData() {
-    const formData = {
-        productName: name.value,
-        manufacturer: manufacturer.value,
-        productExpiry: new Date(expiryDate.value).toISOString(),
-        productQuantity: quantity.value
-    };
-
-    localStorage.setItem('formData', JSON.stringify(formData));
-}
-
-// Function to load form data from local storage
-function loadFormData() {
-    const storedData = localStorage.getItem('formData');
-    if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        name.value = parsedData.productName || '';
-        manufacturer.value = parsedData.manufacturer || '';
-
-        const isoDate = parsedData.productExpiry || '';
-        expiryDate.value = isoDate ? new Date(isoDate).toISOString().split('T')[0] : '';
-
-        quantity.value = parsedData.productQuantity || '';
+// function to delete a product
+function deleteProduct(productId) {
+    const productIndex = products.findIndex(product => product.id === productId);
+    if (productIndex > -1) {
+        products.splice(productIndex, 1);
+        localStorage.setItem('products', JSON.stringify(products)); // update localStorage
+        displayProducts();
     }
 }
 
-// Toggle buttons functionality
+// event listeners
+productForm.addEventListener('submit', addProduct);
+
 toggleGeneralButton.addEventListener('click', () => {
-    toggleGeneralButton.classList.add('active');
-    toggleLiquidButton.classList.remove('active'); 
-    storageList.style.display = 'block'; 
-    liquidStorageList.style.display = 'none'; 
-    renderProducts(); 
+    document.querySelector('.display__storage').classList.add('active');
+    document.querySelector('.display__storage__liquids').classList.remove('active');
 });
 
 toggleLiquidButton.addEventListener('click', () => {
-    toggleLiquidButton.classList.add('active'); 
-    toggleGeneralButton.classList.remove('active'); 
-    storageList.style.display = 'none'; 
-    liquidStorageList.style.display = 'block'; 
-    renderProducts(); 
+    document.querySelector('.display__storage').classList.remove('active');
+    document.querySelector('.display__storage__liquids').classList.add('active');
 });
 
-// Call renderProducts when the page loads
+// helper functions
+function showPositiveToast(toast) {
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 2000);
+}
+
+function showErrorToast(toast) {
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 2000);
+}
+
+
+
 window.addEventListener('load', () => {
-    loadFormData(); 
+    loadProductsFromLocalStorage();
+    console.log('Products after loading:', products);
     toggleGeneralButton.classList.add('active'); 
     storageList.style.display = 'block'; 
-    renderProducts(); 
 });
+
+// display
+displayProducts();
