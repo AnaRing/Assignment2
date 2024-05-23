@@ -158,6 +158,14 @@ button {
         flex-direction: column;
     }
 
+    .pharmacy__storage__form h2 {
+        text-align: center;
+    }
+
+    .pharmacy__storage__form label {
+        font-size: x-small;
+    }
+
     .display__storage__container {
         flex-direction: row;
     }

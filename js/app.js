@@ -144,6 +144,17 @@ function deleteProduct(productId) {
     }
 }
 
+// function to check if the form is filled out
+function isFormFilledOut(form) {
+    const formInputs = form.querySelectorAll('input[required]');
+    for (const input of formInputs) {
+        if (!input.value.trim()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // event listeners
 productForm.addEventListener('submit', addProduct);
 
