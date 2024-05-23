@@ -13,4 +13,8 @@ The specific data that needs to be stored for each medicine:
 • Expiration date (iso 8601 format)
 • Quantity 
 
-With ES6 classes, inheritance and form validation.
+With ES6 classes, inheritance and form validation. 
+
+This assignment really was the bane of my existence, because I had to troubleshoot it so many times after having to redo it
+bc of me making it without inheritance the first time around. Neither I, nor chatGpt was able to find the error, after checking about
+a hundred times - so what I did in the end was rewrite the entire javascript file - and managed to get it working correctly.
